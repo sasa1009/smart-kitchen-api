@@ -30,4 +30,4 @@
 .DS_Store
 
 # Ignore env file
-.env
+/config/local_env.yml
