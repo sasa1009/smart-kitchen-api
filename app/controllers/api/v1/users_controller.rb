@@ -11,6 +11,11 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     user = User.find(user_params[:id])
+    client = Aws::S3::Client.new
+    client.delete_object({
+      bucket: ENV['S3_BUCKET'], 
+      key: user.image_key, 
+    })
     user.update(update_user_params)
     render json: user, serializer: UserSerializer
   end
