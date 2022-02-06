@@ -10,7 +10,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_04_172917) do
+ActiveRecord::Schema.define(version: 2022_02_06_080449) do
+
+  create_table "ingredients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name"
+    t.string "amount"
+    t.bigint "recipe_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["recipe_id"], name: "index_ingredients_on_recipe_id"
+  end
+
+  create_table "procedures", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "description"
+    t.text "image_url"
+    t.text "image_key"
+    t.bigint "recipe_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["recipe_id"], name: "index_procedures_on_recipe_id"
+  end
+
+  create_table "recipes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "title"
+    t.string "comment"
+    t.integer "amount"
+    t.integer "calorie"
+    t.string "main_ingredient"
+    t.string "category"
+    t.string "tips"
+    t.text "image_url"
+    t.text "image_key"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["category"], name: "index_recipes_on_category"
+    t.index ["main_ingredient"], name: "index_recipes_on_main_ingredient"
+    t.index ["title"], name: "index_recipes_on_title"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -30,8 +66,8 @@ ActiveRecord::Schema.define(version: 2022_02_04_172917) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "comment"
-    t.string "image_url"
-    t.string "image_key"
+    t.text "image_url"
+    t.text "image_key"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
