@@ -15,6 +15,7 @@ class Api::V1::RecipesController < ApplicationController
       end
       recipe.procedures.create!(procedures)
     end
+    render json: { message: 'created' }, status: 201
   end
 
   private
