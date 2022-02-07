@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_06_080449) do
+ActiveRecord::Schema.define(version: 2022_02_07_045319) do
 
   create_table "ingredients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.integer "index"
@@ -45,9 +45,11 @@ ActiveRecord::Schema.define(version: 2022_02_06_080449) do
     t.text "image_key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id"
     t.index ["category"], name: "index_recipes_on_category"
     t.index ["main_ingredient"], name: "index_recipes_on_main_ingredient"
     t.index ["title"], name: "index_recipes_on_title"
+    t.index ["user_id"], name: "index_recipes_on_user_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -76,4 +78,5 @@ ActiveRecord::Schema.define(version: 2022_02_06_080449) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "recipes", "users"
 end

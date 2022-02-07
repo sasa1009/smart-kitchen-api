@@ -2,8 +2,9 @@ class Api::V1::RecipesController < ApplicationController
   before_action :authenticate_api_v1_user!, only: [:create]
 
   def create
-    Recipe.transaction do
-      recipe = Recipe.create!(recipe_params)
+    User.transaction do
+      user = User.find_by(uid: request.headers[:uid])
+      recipe = user.recipes.create!(recipe_params)
       ingredients = []
       for ingredient in params[:ingredients] do
         ingredients.push(ingredient.permit!.to_hash)
