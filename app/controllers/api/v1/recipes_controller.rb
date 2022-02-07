@@ -4,13 +4,16 @@ class Api::V1::RecipesController < ApplicationController
   def create
     Recipe.transaction do
       recipe = Recipe.create!(recipe_params)
-      p recipe
+      ingredients = []
       for ingredient in params[:ingredients] do
-        recipe.ingredients.create!(index: ingredient[:index], name: ingredient[:name], amount: ingredient[:amount])
+        ingredients.push(ingredient.permit!.to_hash)
       end
+      recipe.ingredients.create!(ingredients)
+      procedures = []
       for procedure in params[:procedures] do
-        recipe.procedures.create!(index: procedure[:index], description: procedure[:description], image_url: procedure[:image_url], image_key: procedure[:image_key])
+        procedures.push(procedure.permit!.to_hash)
       end
+      recipe.procedures.create!(procedures)
     end
   end
 
