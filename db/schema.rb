@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2022_02_06_080449) do
 
   create_table "ingredients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "index"
     t.string "name"
     t.string "amount"
     t.bigint "recipe_id"
@@ -22,6 +23,7 @@ ActiveRecord::Schema.define(version: 2022_02_06_080449) do
   end
 
   create_table "procedures", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "index"
     t.string "description"
     t.text "image_url"
     t.text "image_key"
