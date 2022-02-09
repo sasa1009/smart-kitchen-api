@@ -1,0 +1,11 @@
+# coding: utf-8
+
+# 牛丼
+gyudon = Recipe.create(title: '家で本格の味!吉野家の牛丼を再現', comment: '有名チェーン店の牛丼の味を再現してみました!', amount: 1, calorie: 1, main_ingredient: '牛肉', category: 'ご飯もの', tips: '玉ねぎはくし切りに切る。\n味付けは甘めが美味しいですね。', image_url: 'https://smart-kitchen-dev.s3.ap-northeast-1.amazonaws.com/gyudon/%E3%83%A1%E3%82%A4%E3%83%B3.jpeg', user_id: 1)
+gyudon.ingredients.create([{index: 0, name: '水', amount: '100cc'}, {index: 1, name: '白ワイン', amount: '100cc'}, {index: 2, name: '砂糖', amount: '大さじ1'}, {index: 3, name: 'みりん', amount: '50cc'}, {index: 4, name: '昆布5cm角', amount: '1枚'}, {index: 5, name: 'ほんだし', amount: '小さじ1'}, {index: 6, name: '醤油', amount: '50cc'}, {index: 7, name: '牛バラ肉(オーストラリア産)', amount: '300g'}, {index: 8, name: '玉ねぎ中玉', amount: '2個'}, {index: 9, name: '紅生姜', amount: '適量'}, {index: 10, name: '卵', amount: '適量'}, ])
+gyudon.procedures.create([{index: 0, description: '玉ねぎはくし切りに切る。', image_url: 'https://smart-kitchen-dev.s3.ap-northeast-1.amazonaws.com/gyudon/%E7%8E%89%E3%81%AD%E3%81%8D%E3%82%99%E3%82%92%E5%88%87%E3%82%8B.jpeg'}, {index: 1, description: 'だし汁材料を鍋に入れ沸騰させる。', image_url: ''}, {index: 2, description: '沸騰した昆布をとり出し、牛肉を入れる。', image_url: ''}, {index: 3, description: '牛肉の色が変わる(火がとおる)寸前に鍋から一旦全部出す。', image_url: ''}, {index: 4, description: '牛肉を出した鍋に玉ねぎを入れ、沸騰したら蓋をして弱火で20分待つ。', image_url: 'https://smart-kitchen-dev.s3.ap-northeast-1.amazonaws.com/gyudon/%E7%85%AE%E3%82%8B.jpeg'}, {index: 5, description: '牛肉を鍋に戻し、火を通す。', image_url: ''}, {index: 6, description: 'ご飯の上にかければ、牛丼の完成！', image_url: ''}, ])
+
+# sample
+# gyudon = Recipe.create(title: '', comment: '', amount: 1, calorie: 1, main_ingredient: '', category: '', tips: '', image_url: '', user_id: 1)
+# gyudon.ingredients.create([{index: 0, name: '', amount: '100cc'}, {index: 1, name: '', amount: ''}, {index: 2, name: '', amount: ''}, {index: 3, name: '', amount: ''}, {index: 4, name: '', amount: ''}, {index: 5, name: '', amount: ''}, ])
+# gyudon.procedures.create([{index: 0, description: '', image_url: ''}, {index: 1, description: '', image_url: ''}, {index: 2, description: '', image_url: ''}, {index: 3, description: '', image_url: ''}, {index: 4, description: '', image_url: ''}, {index: 5, description: '', image_url: ''}, {index: 6, description: '', image_url: ''}, ])
