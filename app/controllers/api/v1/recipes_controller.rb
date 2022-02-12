@@ -2,8 +2,19 @@ class Api::V1::RecipesController < ApplicationController
   before_action :authenticate_api_v1_user!, only: [:create]
 
   def index
-    recipes = Recipe.all
-    render json: recipes, each_serializer: IndexRecipeSerializer
+    recipes = nil
+    count = nil
+    if params[:category] != ''
+      recipes = Recipe.where(category: params[:category]).includes(:user).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+      count = Recipe.where(category: params[:category]).count
+    elsif params[:main_ingredient] != ''
+      recipes = Recipe.where(main_ingredient: params[:main_ingredient]).includes(:user).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+      count = Recipe.where(main_ingredient: params[:main_ingredient]).count
+    else
+      recipes = Recipe.includes(:user).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+      count = Recipe.count
+    end
+    render json: recipes, meta: { total: count }, each_serializer: IndexRecipeSerializer
   end
 
   def create
