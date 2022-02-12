@@ -56,7 +56,19 @@ class Api::V1::RecipesController < ApplicationController
 
   def show
     recipe = Recipe.find(params[:id])
-    render json: recipe, serializer: RecipeSerializer
+
+    # ログイン中の場合はユーザー情報を取得
+    current_user = current_api_v1_user
+
+    # JSONデータを整形
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(
+      recipe,
+      includes: '**',
+      serializer: RecipeSerializer,
+      current_user: current_user,
+    )
+
+    render json: serializable_resource.as_json
   end
 
   private
