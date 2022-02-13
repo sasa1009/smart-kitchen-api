@@ -71,6 +71,43 @@ class Api::V1::RecipesController < ApplicationController
     render json: serializable_resource.as_json
   end
 
+  def user
+    recipes = Recipe.where(user_id: params[:user_id]).includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+    count = Recipe.where(user_id: params[:user_id]).count
+
+    # ログイン中の場合はユーザー情報を取得
+    current_user = current_api_v1_user
+
+    # JSONデータを整形
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(
+      recipes,
+      includes: '**',
+      each_serializer: IndexRecipeSerializer,
+      current_user: current_user,
+      meta: { total: count }
+    )
+    render json: serializable_resource.as_json
+  end
+
+  def favorite
+    user = User.find(params[:user_id])
+    recipes = user.favorited_recipes.includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+    count = user.favorited_recipes.count
+
+    # ログイン中の場合はユーザー情報を取得
+    current_user = current_api_v1_user
+
+    # JSONデータを整形
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(
+      recipes,
+      includes: '**',
+      each_serializer: IndexRecipeSerializer,
+      current_user: current_user,
+      meta: { total: count }
+    )
+    render json: serializable_resource.as_json
+  end
+
   private
 
     def recipe_params
