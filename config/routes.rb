@@ -14,12 +14,18 @@ Rails.application.routes.draw do
       end
 
       resources :users, only: %i[index show update]
+      get '/users/:id/followings', to: 'users#followings'
+      get '/users/:id/followers', to: 'users#followers'
+
       resources :recipes, only: %i[index create show]
       get '/recipes/:user_id/user', to: 'recipes#user'
       get '/recipes/:user_id/favorite', to: 'recipes#favorite'
 
       post '/favorites', to: 'favorites#create'
       delete '/favorites', to: 'favorites#destroy'
+
+      post '/relationships', to: 'relationships#create'
+      delete '/relationships', to: 'relationships#destroy'
     end
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
