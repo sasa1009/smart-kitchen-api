@@ -7,7 +7,7 @@ class Api::V1::UsersController < ApplicationController
 
   def followings
     user = User.find(user_params[:id])
-    users = user.followings
+    users = user.followings.limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
     count = user.followings.count
 
     # ログイン中の場合はrelationshipsを取得
@@ -30,7 +30,7 @@ class Api::V1::UsersController < ApplicationController
 
   def followers
     user = User.find(user_params[:id])
-    users = user.followers
+    users = user.followers.limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
     count = user.followers.count
 
     # ログイン中の場合はrelationshipsを取得
