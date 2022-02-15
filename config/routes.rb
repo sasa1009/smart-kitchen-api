@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       resources :recipes, only: %i[index create show]
       get '/recipes/:user_id/user', to: 'recipes#user'
       get '/recipes/:user_id/favorite', to: 'recipes#favorite'
+      get '/recipes/:user_id/following', to: 'recipes#following'
 
       post '/favorites', to: 'favorites#create'
       delete '/favorites', to: 'favorites#destroy'
