@@ -1,5 +1,5 @@
 class IndexRecipeSerializer < ActiveModel::Serializer
-  belongs_to :user
+  belongs_to :user, serializer: IndexRecipeUserSerializer
 
   attributes :id, :title, :calorie, :main_ingredient, :category, :image_url, :is_favorited, :favorited_count
 

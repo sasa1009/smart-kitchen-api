@@ -5,8 +5,66 @@ class Api::V1::UsersController < ApplicationController
     render json: User.all
   end
 
+  def followings
+    user = User.find(user_params[:id])
+    users = user.followings.limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+    count = user.followings.count
+
+    # ログイン中の場合はrelationshipsを取得
+    current_user = current_api_v1_user
+    relationships = []
+    if !!current_user
+      relationships = current_user.relationships
+    end
+
+    # JSONデータを整形
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(
+      users,
+      includes: '**',
+      each_serializer: IndexUserSerializer,
+      relationships: relationships,
+      meta: { total: count }
+    )
+    render json: serializable_resource.as_json
+  end
+
+  def followers
+    user = User.find(user_params[:id])
+    users = user.followers.limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+    count = user.followers.count
+
+    # ログイン中の場合はrelationshipsを取得
+    current_user = current_api_v1_user
+    relationships = []
+    if !!current_user
+      relationships = current_user.relationships
+    end
+
+    # JSONデータを整形
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(
+      users,
+      includes: '**',
+      each_serializer: IndexUserSerializer,
+      relationships: relationships,
+      meta: { total: count }
+    )
+    render json: serializable_resource.as_json
+  end
+
   def show
-    render json: User.find(user_params[:id])
+    user = User.find(user_params[:id])
+
+    # ログイン中の場合はユーザー情報を取得
+    current_user = current_api_v1_user
+
+    # JSONデータを整形
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(
+      user,
+      includes: '**',
+      serializer: UserSerializer,
+      current_user: current_user,
+    )
+    render json: serializable_resource.as_json
   end
 
   def update
