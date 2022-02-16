@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
 
   has_many :recipes, dependent: :destroy
   has_many :food_logs, dependent: :destroy
+  has_many :food_log_templates, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorited_recipes, through: :favorites, source: :recipe
 
