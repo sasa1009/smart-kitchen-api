@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :recipes, dependent: :destroy
+  has_many :food_logs, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorited_recipes, through: :favorites, source: :recipe
 
