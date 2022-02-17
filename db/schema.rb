@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(version: 2022_02_16_152244) do
   create_table "food_log_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name"
     t.integer "calorie"
-    t.integer "amount"
     t.bigint "recipe_id"
     t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
