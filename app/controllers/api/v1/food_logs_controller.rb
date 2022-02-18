@@ -1,4 +1,14 @@
 class Api::V1::FoodLogsController < ApplicationController
+  def index
+    current_user = current_api_v1_user
+    if !current_user
+      raise "You need to sign in or sign up before continuing."
+    end
+
+    food_logs = current_user.food_logs.where(meal_date_time: Time.parse(params[:from])..Time.parse(params[:to]))
+    render json: food_logs, each_serializer: IndexFoodLogSerializer
+  end
+
   def create
     current_user = current_api_v1_user
     if !current_user

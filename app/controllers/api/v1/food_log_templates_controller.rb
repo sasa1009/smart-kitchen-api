@@ -6,7 +6,7 @@ class Api::V1::FoodLogTemplatesController < ApplicationController
     end
     templates = current_user.food_log_templates.limit(params[:limit]).offset(params[:offset]).order('created_at DESC')
     count = current_user.food_log_templates.count
-    render json: templates, each_serializer: IndexFoodLogTemplatesSerializer, meta: { total: count }
+    render json: templates, each_serializer: IndexFoodLogTemplateSerializer, meta: { total: count }
   end
 
   def destroy
