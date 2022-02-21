@@ -77,7 +77,7 @@ class Api::V1::UsersController < ApplicationController
       })
     end
     user.update(update_user_params)
-    render json: user, serializer: UserSerializer
+    render json: user, serializer: CurrentUserSerializer
   end
 
   private
@@ -87,6 +87,6 @@ class Api::V1::UsersController < ApplicationController
     end
 
     def update_user_params
-      params.permit(:name, :comment, :image_url, :image_key, :user)
+      params.permit(:name, :comment, :image_url, :image_key, :is_set_weight_loss_target, :height, :weight, :sex, :age, :activity_amount, :weight_loss_target)
     end
 end

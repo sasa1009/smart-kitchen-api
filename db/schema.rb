@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_16_152244) do
+ActiveRecord::Schema.define(version: 2022_02_21_095741) do
 
   create_table "favorites", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 2022_02_16_152244) do
   create_table "food_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name"
     t.integer "calorie"
-    t.integer "amount"
+    t.float "amount"
     t.bigint "recipe_id"
     t.datetime "meal_date_time"
     t.bigint "user_id"
@@ -114,6 +114,13 @@ ActiveRecord::Schema.define(version: 2022_02_16_152244) do
     t.string "comment"
     t.text "image_url"
     t.text "image_key"
+    t.boolean "is_set_weight_loss_target"
+    t.integer "height"
+    t.integer "weight"
+    t.string "sex"
+    t.integer "age"
+    t.float "activity_amount"
+    t.float "weight_loss_target"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
