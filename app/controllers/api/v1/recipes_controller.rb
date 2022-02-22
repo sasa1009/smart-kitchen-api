@@ -124,7 +124,6 @@ class Api::V1::RecipesController < ApplicationController
       LIMIT #{params[:limit].to_i}
       OFFSET #{params[:offset].to_i}"
     ).pluck('recipe_id')
-    p recipe_ids
 
     recipes = Recipe.find_by_sql(["
       SELECT
