@@ -5,8 +5,14 @@ class Api::V1::RecipesController < ApplicationController
     recipes = nil
     count = nil
 
+    # 検索キーワードによる絞り込みが設定されている場合
+    if params[:search_keyword] != ''
+      q = Recipe.ransack(title_cont: params[:search_keyword], main_ingredient_cont: params[:search_keyword], category_cont: params[:search_keyword], ingredients_name_cont: params[:search_keyword], m: 'or')
+      
+      recipes = q.result(distinct: true).includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+      count = q.result(distinct: true).count
     # カテゴリーによる絞り込みが設定されている場合
-    if params[:category] != ''
+    elsif params[:category] != ''
       recipes = Recipe.where(category: params[:category]).includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
       count = Recipe.where(category: params[:category]).count
 
