@@ -114,6 +114,98 @@ class Api::V1::RecipesController < ApplicationController
     render json: serializable_resource.as_json
   end
 
+  def ranking
+    recipe_ids = Favorite.connection.select_all("
+      SELECT COUNT(id) AS id_count, recipe_id
+      FROM favorites
+      WHERE created_at BETWEEN '#{params[:from]}' AND '#{params[:to]}'
+      GROUP BY recipe_id
+      ORDER BY id_count DESC
+      LIMIT #{params[:limit].to_i}
+      OFFSET #{params[:offset].to_i}"
+    ).pluck('recipe_id')
+    p recipe_ids
+
+    recipes = Recipe.find_by_sql(["
+      SELECT
+        recipes.id,
+        recipes.title,
+        recipes.calorie,
+        recipes.main_ingredient,
+        recipes.category,
+        recipes.image_url,
+        users.id AS user_id,
+        users.name AS user_name,
+        users.image_url AS user_image_url,
+        (
+          SELECT COUNT(*)
+          FROM favorites
+          WHERE favorites.recipe_id = recipes.id
+        ) AS favorited_count
+      FROM recipes
+      LEFT JOIN users
+      ON recipes.user_id = users.id
+      WHERE recipes.id IN(?)
+      ORDER BY favorited_count DESC",
+      recipe_ids
+    ])
+
+    count = Recipe.where(id: recipe_ids).count
+
+    # # ログイン中の場合はユーザー情報を取得
+    current_user = current_api_v1_user
+    current_user_favorites = current_user.favorites
+
+    # レスポンスデータを作成
+    json_data = {
+      recipes: [],
+      meta: {
+        total: count
+      }
+    }
+
+    for recipe in recipes do
+      if !!current_user
+        favorite = current_user_favorites.find do |favorite|
+          favorite[:recipe_id] === recipe[:id]
+        end
+        json_data[:recipes].push({
+          id: recipe[:id],
+          title: recipe[:title],
+          calorie: recipe[:calorie],
+          main_ingredient: recipe[:main_ingredient],
+          category: recipe[:category],
+          image_url: recipe[:image_url],
+          is_favorited: !!favorite,
+          favorited_count: recipe[:favorited_count],
+          user: {
+            id: recipe[:user_id],
+            name: recipe[:user_name],
+            image_url: recipe[:user_image_url],
+          }
+        })
+      else
+        json_data[:recipes].push({
+          id: recipe[:id],
+          title: recipe[:title],
+          calorie: recipe[:calorie],
+          main_ingredient: recipe[:main_ingredient],
+          category: recipe[:category],
+          image_url: recipe[:image_url],
+          is_favorited: false,
+          favorited_count: false,
+          user: {
+            id: recipe[:user_id],
+            name: recipe[:user_name],
+            image_url: recipe[:user_image_url],
+          }
+        })
+      end
+    end
+
+    render json: json_data
+  end
+
   def following
     user = User.find(params[:user_id])
     relationships = user.relationships.map{ |relationship| relationship[:follow_id] }
