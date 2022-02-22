@@ -134,6 +134,7 @@ class Api::V1::RecipesController < ApplicationController
         recipes.main_ingredient,
         recipes.category,
         recipes.image_url,
+        recipes.updated_at,
         users.id AS user_id,
         users.name AS user_name,
         users.image_url AS user_image_url,
@@ -146,7 +147,7 @@ class Api::V1::RecipesController < ApplicationController
       LEFT JOIN users
       ON recipes.user_id = users.id
       WHERE recipes.id IN(?)
-      ORDER BY favorited_count DESC",
+      ORDER BY favorited_count DESC, updated_at DESC",
       recipe_ids
     ])
 
@@ -154,10 +155,13 @@ class Api::V1::RecipesController < ApplicationController
 
     # # ログイン中の場合はユーザー情報を取得
     current_user = current_api_v1_user
-    current_user_favorites = current_user.favorites
+    current_user_favorites = nil
+    if !!current_user
+      current_user_favorites = current_user.favorites
+    end
 
     # レスポンスデータを作成
-    json_data = {
+    response_data = {
       recipes: [],
       meta: {
         total: count
@@ -169,7 +173,7 @@ class Api::V1::RecipesController < ApplicationController
         favorite = current_user_favorites.find do |favorite|
           favorite[:recipe_id] === recipe[:id]
         end
-        json_data[:recipes].push({
+        response_data[:recipes].push({
           id: recipe[:id],
           title: recipe[:title],
           calorie: recipe[:calorie],
@@ -185,7 +189,7 @@ class Api::V1::RecipesController < ApplicationController
           }
         })
       else
-        json_data[:recipes].push({
+        response_data[:recipes].push({
           id: recipe[:id],
           title: recipe[:title],
           calorie: recipe[:calorie],
@@ -193,7 +197,7 @@ class Api::V1::RecipesController < ApplicationController
           category: recipe[:category],
           image_url: recipe[:image_url],
           is_favorited: false,
-          favorited_count: false,
+          favorited_count: recipe[:favorited_count],
           user: {
             id: recipe[:user_id],
             name: recipe[:user_name],
@@ -203,7 +207,7 @@ class Api::V1::RecipesController < ApplicationController
       end
     end
 
-    render json: json_data
+    render json: response_data
   end
 
   def following
