@@ -1,9 +1,8 @@
 class RecipeSerializer < ActiveModel::Serializer
   belongs_to :user
   has_many :ingredients
-  has_many :procedures
 
-  attributes :id, :title, :comment, :amount, :calorie, :main_ingredient, :category, :tips, :image_url, :is_favorited
+  attributes :id, :title, :comment, :amount, :calorie, :main_ingredient, :category, :tips, :image_url, :image_key, :is_favorited, :procedures
 
   def is_favorited
     current_user = @instance_options[:current_user]
@@ -12,5 +11,9 @@ class RecipeSerializer < ActiveModel::Serializer
     else
       false
     end
+  end
+
+  def procedures
+    object.procedures.where(is_deleted: false)
   end
 end

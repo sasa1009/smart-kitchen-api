@@ -77,6 +77,35 @@ class Api::V1::RecipesController < ApplicationController
     render json: serializable_resource.as_json
   end
 
+  def update
+    current_user = current_api_v1_user
+    if !current_user
+      raise "You need to sign in or sign up before continuing."
+    end
+    recipe = nil
+    Recipe.transaction do
+      recipe = Recipe.find(params[:id])
+      is_include = current_user.recipes.include?(recipe)
+      if !is_include
+        raise "レシピ情報の更新はレシピの作成者のみが行えます。"
+      end
+      recipe.update!(recipe_params)
+      recipe.ingredients.destroy_all
+      recipe.procedures.update(is_deleted: true)
+      ingredients = []
+      for ingredient in params[:ingredients] do
+        ingredients.push(ingredient.permit!.to_hash)
+      end
+      recipe.ingredients.create!(ingredients)
+      procedures = []
+      for procedure in params[:procedures] do
+        procedures.push(procedure.permit!.to_hash)
+      end
+      recipe.procedures.create!(procedures)
+    end
+    render json: { id: recipe[:id] }, status: 200
+  end
+
   def user
     recipes = Recipe.where(user_id: params[:user_id]).includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
     count = Recipe.where(user_id: params[:user_id]).count
