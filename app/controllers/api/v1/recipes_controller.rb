@@ -115,15 +115,21 @@ class Api::V1::RecipesController < ApplicationController
   end
 
   def ranking
-    recipe_ids = Favorite.connection.select_all("
-      SELECT COUNT(id) AS id_count, recipe_id
+    recipe_ids = Favorite.find_by_sql(["
+      SELECT
+        COUNT(id) AS id_count,
+        recipe_id
       FROM favorites
-      WHERE created_at BETWEEN '#{params[:from]}' AND '#{params[:to]}'
+      WHERE created_at BETWEEN ? AND ?
       GROUP BY recipe_id
       ORDER BY id_count DESC
-      LIMIT #{params[:limit].to_i}
-      OFFSET #{params[:offset].to_i}"
-    ).pluck('recipe_id')
+      LIMIT ?
+      OFFSET ?",
+      params[:from],
+      params[:to],
+      params[:limit].to_i,
+      params[:offset].to_i,
+    ]).pluck('recipe_id')
 
     recipes = Recipe.find_by_sql(["
       SELECT
@@ -141,12 +147,15 @@ class Api::V1::RecipesController < ApplicationController
           SELECT COUNT(*)
           FROM favorites
           WHERE favorites.recipe_id = recipes.id
+          AND created_at BETWEEN ? AND ?
         ) AS favorited_count
       FROM recipes
       LEFT JOIN users
       ON recipes.user_id = users.id
       WHERE recipes.id IN(?)
       ORDER BY favorited_count DESC, updated_at DESC",
+      params[:from],
+      params[:to],
       recipe_ids
     ])
 
