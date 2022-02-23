@@ -5,8 +5,14 @@ class Api::V1::RecipesController < ApplicationController
     recipes = nil
     count = nil
 
+    # 検索キーワードによる絞り込みが設定されている場合
+    if params[:search_keyword] != ''
+      q = Recipe.ransack(title_cont: params[:search_keyword], main_ingredient_cont: params[:search_keyword], category_cont: params[:search_keyword], ingredients_name_cont: params[:search_keyword], m: 'or')
+      
+      recipes = q.result(distinct: true).includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
+      count = q.result(distinct: true).count
     # カテゴリーによる絞り込みが設定されている場合
-    if params[:category] != ''
+    elsif params[:category] != ''
       recipes = Recipe.where(category: params[:category]).includes(:user, :favorites).limit(params[:limit]).offset(params[:offset]).order('updated_at DESC')
       count = Recipe.where(category: params[:category]).count
 
@@ -106,6 +112,110 @@ class Api::V1::RecipesController < ApplicationController
       meta: { total: count }
     )
     render json: serializable_resource.as_json
+  end
+
+  def ranking
+    recipe_ids = Favorite.find_by_sql(["
+      SELECT
+        COUNT(id) AS id_count,
+        recipe_id
+      FROM favorites
+      WHERE created_at BETWEEN ? AND ?
+      GROUP BY recipe_id
+      ORDER BY id_count DESC
+      LIMIT ?
+      OFFSET ?",
+      params[:from],
+      params[:to],
+      params[:limit].to_i,
+      params[:offset].to_i,
+    ]).pluck('recipe_id')
+
+    recipes = Recipe.find_by_sql(["
+      SELECT
+        recipes.id,
+        recipes.title,
+        recipes.calorie,
+        recipes.main_ingredient,
+        recipes.category,
+        recipes.image_url,
+        recipes.updated_at,
+        users.id AS user_id,
+        users.name AS user_name,
+        users.image_url AS user_image_url,
+        (
+          SELECT COUNT(*)
+          FROM favorites
+          WHERE favorites.recipe_id = recipes.id
+          AND created_at BETWEEN ? AND ?
+        ) AS favorited_count
+      FROM recipes
+      LEFT JOIN users
+      ON recipes.user_id = users.id
+      WHERE recipes.id IN(?)
+      ORDER BY favorited_count DESC, updated_at DESC",
+      params[:from],
+      params[:to],
+      recipe_ids
+    ])
+
+    count = Recipe.where(id: recipe_ids).count
+
+    # # ログイン中の場合はユーザー情報を取得
+    current_user = current_api_v1_user
+    current_user_favorites = nil
+    if !!current_user
+      current_user_favorites = current_user.favorites
+    end
+
+    # レスポンスデータを作成
+    response_data = {
+      recipes: [],
+      meta: {
+        total: count
+      }
+    }
+
+    for recipe in recipes do
+      if !!current_user
+        favorite = current_user_favorites.find do |favorite|
+          favorite[:recipe_id] === recipe[:id]
+        end
+        response_data[:recipes].push({
+          id: recipe[:id],
+          title: recipe[:title],
+          calorie: recipe[:calorie],
+          main_ingredient: recipe[:main_ingredient],
+          category: recipe[:category],
+          image_url: recipe[:image_url],
+          is_favorited: !!favorite,
+          favorited_count: recipe[:favorited_count],
+          user: {
+            id: recipe[:user_id],
+            name: recipe[:user_name],
+            image_url: recipe[:user_image_url],
+          }
+        })
+      else
+        response_data[:recipes].push({
+          id: recipe[:id],
+          title: recipe[:title],
+          calorie: recipe[:calorie],
+          main_ingredient: recipe[:main_ingredient],
+          category: recipe[:category],
+          image_url: recipe[:image_url],
+          is_favorited: false,
+          favorited_count: recipe[:favorited_count],
+          user: {
+            id: recipe[:user_id],
+            name: recipe[:user_name],
+            image_url: recipe[:user_image_url],
+          }
+        })
+      end
+    end
+
+    render json: response_data
   end
 
   def following

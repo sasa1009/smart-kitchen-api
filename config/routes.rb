@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       get '/recipes/:user_id/user', to: 'recipes#user'
       get '/recipes/:user_id/favorite', to: 'recipes#favorite'
       get '/recipes/:user_id/following', to: 'recipes#following'
+      get '/recipe_ranking', to: 'recipes#ranking'
 
       resources :food_logs, only: %i[index create destroy]
       resources :food_log_templates, only: %i[index destroy]
