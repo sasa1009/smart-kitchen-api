@@ -267,6 +267,47 @@ class Api::V1::RecipesController < ApplicationController
     render json: serializable_resource.as_json
   end
 
+  def destroy
+    # ユーザー情報取得
+    current_user = current_api_v1_user
+    if !current_user
+      raise "You need to sign in or sign up before continuing."
+    end
+
+    # レシピ情報取得
+    recipe = current_user.recipes.find(params[:id])
+    if !recipe
+      raise "レシピ情報が存在しません。"
+    end
+
+    # レシピ情報に紐づく画像を削除
+    image_key_list = []
+    recipe.procedures.each do |procedure|
+      if procedure.image_key != nil
+        image_key_list.push({
+          key: procedure[:image_key]
+        })
+      end
+    end
+    image_key_list = image_key_list.uniq
+    image_key_list.push({
+      key: recipe[:image_key]
+    })
+    if image_key_list.length >= 1
+      client = Aws::S3::Client.new
+      client.delete_objects({
+        bucket: ENV['S3_BUCKET'],
+        delete: {
+          objects: image_key_list,
+          quiet: false,
+        }
+      })
+    end
+
+    # レシピを削除
+    recipe.destroy!
+  end
+
   private
 
     def recipe_params
