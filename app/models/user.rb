@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :food_log_templates, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorited_recipes, through: :favorites, source: :recipe
+  has_many :notifications, dependent: :destroy
 
   has_many :relationships
   has_many :followings, through: :relationships, source: :follow
