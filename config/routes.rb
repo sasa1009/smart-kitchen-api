@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       get '/users/:id/followings', to: 'users#followings'
       get '/users/:id/followers', to: 'users#followers'
 
-      resources :recipes, only: %i[index create show]
+      resources :recipes, only: %i[index create show update destroy]
       get '/recipes/:user_id/user', to: 'recipes#user'
       get '/recipes/:user_id/favorite', to: 'recipes#favorite'
       get '/recipes/:user_id/following', to: 'recipes#following'

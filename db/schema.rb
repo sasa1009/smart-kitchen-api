@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_21_095741) do
+ActiveRecord::Schema.define(version: 2022_02_23_213705) do
 
   create_table "favorites", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 2022_02_21_095741) do
     t.bigint "recipe_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_deleted", default: false, null: false
     t.index ["recipe_id"], name: "index_procedures_on_recipe_id"
   end
 

@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :authenticate_api_v1_user!, only: [:edit]
+  before_action :authenticate_api_v1_user!, only: [:update]
 
   def index
     render json: User.all
@@ -69,11 +69,11 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     user = User.find(user_params[:id])
-    client = Aws::S3::Client.new
-    if update_user_params.has_key?(:image_url) && update_user_params.has_key?(:image_key)
+    if update_user_params.has_key?(:image_url) && update_user_params.has_key?(:image_key) && user[:image_key] != nil
+      client = Aws::S3::Client.new
       client.delete_object({
         bucket: ENV['S3_BUCKET'], 
-        key: user.image_key, 
+        key: user[:image_key],
       })
     end
     user.update(update_user_params)
