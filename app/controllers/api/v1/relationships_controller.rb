@@ -3,8 +3,12 @@ class Api::V1::RelationshipsController < ApplicationController
 
   def create
     current_user = current_api_v1_user
-    user = User.find(relationship_params[:user_id])
-    relationship = current_user.follow(user)
+    relationship = nil
+    User.transaction do
+      user = User.find(relationship_params[:user_id])
+      relationship = current_user.follow(user)
+      user.notifications.create!(sender_id: current_user[:id])
+    end
     render json: { id: relationship[:id] }, status: 201
   end
 
