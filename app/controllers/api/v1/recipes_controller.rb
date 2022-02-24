@@ -290,9 +290,11 @@ class Api::V1::RecipesController < ApplicationController
       end
     end
     image_key_list = image_key_list.uniq
-    image_key_list.push({
-      key: recipe[:image_key]
-    })
+    if recipe[:image_key] != nil
+      image_key_list.push({
+        key: recipe[:image_key]
+      })
+    end
     if image_key_list.length >= 1
       client = Aws::S3::Client.new
       client.delete_objects({
