@@ -56,10 +56,12 @@ ActiveRecord::Schema.define(version: 2022_02_24_180247) do
 
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id"
-    t.bigint "sender_id"
     t.bigint "recipe_id"
+    t.bigint "sender_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["recipe_id"], name: "index_notifications_on_recipe_id"
+    t.index ["sender_id"], name: "index_notifications_on_sender_id"
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
@@ -141,7 +143,9 @@ ActiveRecord::Schema.define(version: 2022_02_24_180247) do
   add_foreign_key "favorites", "users"
   add_foreign_key "food_log_templates", "users"
   add_foreign_key "food_logs", "users"
+  add_foreign_key "notifications", "recipes"
   add_foreign_key "notifications", "users"
+  add_foreign_key "notifications", "users", column: "sender_id"
   add_foreign_key "recipes", "users"
   add_foreign_key "relationships", "users"
   add_foreign_key "relationships", "users", column: "follow_id"

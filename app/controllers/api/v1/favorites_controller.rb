@@ -7,7 +7,9 @@ class Api::V1::FavoritesController < ApplicationController
       user = User.find_by(uid: request.headers[:uid])
       favorite = user.favorites.create!(recipe_id: favorite_params[:recipe_id])
       recipe = Recipe.find(favorite_params[:recipe_id])
-      Notification.create!(user_id: recipe[:user_id], sender_id: current_user[:id], recipe_id: favorite_params[:recipe_id])
+      if (user[:id] != recipe[:user_id])
+        Notification.create!(user_id: recipe[:user_id], sender_id: user[:id], recipe_id: favorite_params[:recipe_id])
+      end
     end
     render json: { id: favorite[:id] }, status: 201
   end

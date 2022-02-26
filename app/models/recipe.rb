@@ -4,4 +4,5 @@ class Recipe < ApplicationRecord
   has_many :procedures, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorited_users, through: :favorites, source: :user
+  has_many :notifications, dependent: :destroy
 end

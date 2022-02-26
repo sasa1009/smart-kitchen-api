@@ -7,7 +7,7 @@ class Api::V1::RelationshipsController < ApplicationController
     User.transaction do
       user = User.find(relationship_params[:user_id])
       relationship = current_user.follow(user)
-      user.notifications.create!(sender_id: current_user[:id])
+      user.notifications.create!(sender_id: current_user[:id], recipe_id: nil)
     end
     render json: { id: relationship[:id] }, status: 201
   end
