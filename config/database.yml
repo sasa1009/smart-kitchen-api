@@ -50,5 +50,7 @@ test:
 production:
   <<: *default
   database: smart_kitchen_api_production
-  username: smart_kitchen_api
+  username: admin
   password: <%= ENV['SMART_KITCHEN_API_DATABASE_PASSWORD'] %>
+  host: <%= ENV['DATABASE_URL'] %>
+  port: <%= ENV['DATABASE_PORT'] %>

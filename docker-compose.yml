@@ -4,11 +4,12 @@ services:
     build: .
     ports:
       - '3000:3000' # localhostの3000ポートでアクセスできるようにする
+      - '80:80'
     volumes:
       - .:/smart-kitchen-api # アプリケーションファイルの同期
     depends_on:
       - db
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    # command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'" # entrypoint.shを作成したためコメントアウト
   db:
     image: mysql:5.7
     ports:
