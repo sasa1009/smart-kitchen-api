@@ -1,10 +1,14 @@
 #!/bin/bash
 set -e
 
-# createとseedはfargateの初回のみ実行
+# DB作成
 # bundle exec rails db:create
+
+# DBマイグレーション
 # bundle exec rails db:migrate
-# bundle exec rails db:seed
+
+# サンプルデータ投入
+# bundle exec rails r db/seeds/recipe.rb
 
 sudo service nginx start
 
