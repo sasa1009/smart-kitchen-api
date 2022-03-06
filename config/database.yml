@@ -48,7 +48,10 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   database: smart_kitchen_api_production
-  username: smart_kitchen_api
-  password: <%= ENV['SMART_KITCHEN_API_DATABASE_PASSWORD'] %>
+  username: <%= ENV['DATABASE_USER_NAME'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
