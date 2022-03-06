@@ -9,6 +9,8 @@ set -e
 
 # サンプルデータ投入
 # bundle exec rails r db/seeds/recipe.rb
+# bundle exec rails r db/seeds/favorite.rb
+# bundle exec rails r db/seeds/relationship.rb
 
 sudo service nginx start
 
