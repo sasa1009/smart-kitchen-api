@@ -47,6 +47,18 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
+
+# ECS用の設置
+# production:
+#   adapter: mysql2
+#   encoding: utf8mb4
+#   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#   database: smart_kitchen_api_production
+#   username: <%= ENV['DATABASE_USER_NAME'] %>
+#   password: <%= ENV['DATABASE_PASSWORD'] %>
+#   url: <%= ENV['DATABASE_URL'] %>
+
+# EC2用の設置
 production:
   adapter: mysql2
   encoding: utf8mb4
@@ -54,4 +66,4 @@ production:
   database: smart_kitchen_api_production
   username: <%= ENV['DATABASE_USER_NAME'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
-  url: <%= ENV['DATABASE_URL'] %>
+  host: localhost

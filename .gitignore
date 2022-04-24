@@ -31,3 +31,6 @@
 
 # Ignore env file
 /config/local_env.yml
+
+# Ignore vendor/bundle
+/vendor/bundle
