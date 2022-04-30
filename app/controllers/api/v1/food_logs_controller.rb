@@ -49,4 +49,13 @@ class Api::V1::FoodLogsController < ApplicationController
     end
     current_user.food_logs.destroy(params[:id])
   end
+
+  def export
+    current_user = current_api_v1_user
+    if !current_user
+      raise "You need to sign in or sign up before continuing."
+    end
+    food_logs = FoodLog.where(meal_date_time: Time.parse(params[:from])..Time.parse(params[:to]))
+    render json: food_logs, meta: { total: food_logs.length }, each_serializer: ExportFoodLogSerializer
+  end
 end
