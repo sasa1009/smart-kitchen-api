@@ -24,6 +24,8 @@ Rails.application.routes.draw do
       get '/recipe_ranking', to: 'recipes#ranking'
 
       resources :food_logs, only: %i[index create destroy]
+      get '/food_logs/export', to: 'food_logs#export'
+
       resources :food_log_templates, only: %i[index destroy]
 
       post '/favorites', to: 'favorites#create'
