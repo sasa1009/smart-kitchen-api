@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
       resources :food_logs, only: %i[index create destroy]
       get '/food_logs/export', to: 'food_logs#export'
+      post '/food_logs/import', to: 'food_logs#import'
 
       resources :food_log_templates, only: %i[index destroy]
 
