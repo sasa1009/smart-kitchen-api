@@ -58,4 +58,24 @@ class Api::V1::FoodLogsController < ApplicationController
     food_logs = FoodLog.where(meal_date_time: Time.parse(params[:from])..Time.parse(params[:to]))
     render json: food_logs, meta: { total: food_logs.length }, each_serializer: ExportFoodLogSerializer
   end
+
+  def import
+    current_user = current_api_v1_user
+    if !current_user
+      raise "You need to sign in or sign up before continuing."
+    end
+    food_logs = []
+    for food_log in params[:food_logs] do
+      food_logs.push({
+        name: food_log[:name],
+        calorie: food_log[:calorie],
+        amount: food_log[:amount],
+        meal_date_time: Time.parse(food_log[:meal_date_time]),
+        recipe_id: food_log[:recipe_id],
+        user_id: food_log[:user_id]
+      })
+    end
+    FoodLog.create!(food_logs)
+    render json: { message: 'Created' }, status: 201
+  end
 end
